@@ -17,6 +17,13 @@ class Application:
         wd = self.wd
         wd.get("http://localhost/addressbook/")
 
+    def ensure_home_page(self):
+        if not self.is_home_page():
+            self.open_home_page()
+
+    def is_home_page(self):
+        return self.wd.current_url == "http://localhost/addressbook/"
+
     def destroy(self):
         self.wd.quit()
 
