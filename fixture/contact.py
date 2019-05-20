@@ -54,6 +54,7 @@ class ContactHelper:
         self.fill_contact_form(contact)
         # submit contact creation
         wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
+        self.contact_cache = None
 
     def delete_first_contact(self):
         wd = self.app.wd
@@ -63,6 +64,7 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[2]/input").click()
         # accept deleting contact
         wd.switch_to_alert().accept()
+        self.contact_cache = None
 
     def edit_first_contact(self, contact):
         wd = self.app.wd
@@ -73,21 +75,25 @@ class ContactHelper:
         self.fill_contact_form(contact)
         # confirm updates
         wd.find_element_by_name("update").click()
+        self.contact_cache = None
 
     def count(self):
         wd = self.app.wd
         self.app.open_home_page()
         return len(wd.find_elements_by_name("selected[]"))
 
+    contact_cache = None
+
     def get_contact_list(self):
-        wd = self.app.wd
-        self.app.open_home_page()
-        contacts = []
-        for element in wd.find_elements_by_name("entry"):
-            id = element.find_element_by_name("selected[]").get_attribute("value")
-            last_name = element.find_elements_by_tag_name("td")[1].text
-            first_name = element.find_elements_by_tag_name("td")[2].text
-            contacts.append(Contact(first_name=first_name, last_name=last_name, id=id))
-        return contacts
+        if self.contact_cache is None:
+            wd = self.app.wd
+            self.app.open_home_page()
+            self.contact_cache = []
+            for element in wd.find_elements_by_name("entry"):
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                last_name = element.find_elements_by_tag_name("td")[1].text
+                first_name = element.find_elements_by_tag_name("td")[2].text
+                self.contact_cache(Contact(first_name=first_name, last_name=last_name, id=id))
+            return list(self.contact_cache)
 
 
