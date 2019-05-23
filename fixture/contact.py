@@ -64,6 +64,7 @@ class ContactHelper:
         wd.find_element_by_xpath("//div[2]/input").click()
         # accept deleting contact
         wd.switch_to_alert().accept()
+        wd.find_elements_by_css_selector("div.msgbox")
         self.contact_cache = None
 
     def edit_first_contact(self, contact):
@@ -93,7 +94,7 @@ class ContactHelper:
                 id = element.find_element_by_name("selected[]").get_attribute("value")
                 last_name = element.find_elements_by_tag_name("td")[1].text
                 first_name = element.find_elements_by_tag_name("td")[2].text
-                self.contact_cache(Contact(first_name=first_name, last_name=last_name, id=id))
+                self.contact_cache.append(Contact(first_name=first_name, last_name=last_name, id=id))
             return list(self.contact_cache)
 
 
